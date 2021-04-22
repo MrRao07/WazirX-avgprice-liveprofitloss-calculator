@@ -1,0 +1,245 @@
+// ==UserScript==
+// @name         wazirx avgprice
+// @namespace    http://tampermonkey.net/
+// @version      0.1
+// @description  try to take over the world!
+// @author       Mr.Rao
+// @match        https://wazirx.com/exchange/*
+// @icon         data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
+// @grant        none
+// ==/UserScript==
+
+
+
+
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function changeflag(flag){
+    if (flag==0) return 1;
+    else return 0;
+}
+
+window.addEventListener('load', async function() {
+    'use strict';
+
+    await sleep(2000);
+
+    let totalinr=0;
+    let totalprofitloss=0;
+    let coinamtMap = new Map();
+    let flag=1;
+
+    let A= document.getElementsByClassName("sc-bdVaJa sc-jzgbtB cqfbzB");
+
+    let btn = document.createElement("button");
+    btn.innerHTML = "Mr X";
+    btn.className = "Btn";
+    A[0].append(btn);
+
+    const styles ={
+        fontVariant: 'none',
+        background: 'dodgerblue',
+        color: 'white',
+        fontSize: 'revert',
+        padding: 'revert',
+        blockSize: 'auto'
+    }
+    Object.assign(btn.style,styles);
+
+    let LP = document.createElement("LP");
+    LP.innerHTML = 0;
+    A[0].append(LP);
+
+    let Livestyles0 ={
+        color: "black",
+        textShadow: "0 0 black",
+        background: "white"
+    }
+    let Livestyles1 ={
+        color: "black",
+        textShadow: "0 0 black",
+        background: "#F1535F"
+    }
+    let Livestyles2 ={
+        color: "black",
+        textShadow: "0 0 black",
+        background: "#d5f5e4"
+    }
+
+
+    let btn2 = document.createElement("button");
+    btn2.innerHTML = "re";
+    btn2.className = "Btn";
+    A[0].append(btn2);
+
+    const btn2styles ={
+        fontVariant: 'none',
+        background: 'white',
+        color: 'black',
+        fontSize: 'revert',
+        padding: 'revert',
+        blockSize: 'auto'
+    }
+    Object.assign(btn2.style,btn2styles);
+
+    async function liveloop(){
+        while(1)
+        {
+            if(flag==0)return;
+            await sleep(1000);
+            //btn2.click();
+            liveprofitloss();
+        }
+    }
+
+    async function liveprofitloss(){
+        let star= document.getElementsByTagName("label");
+        star[0].click();
+        let starcoins= document.getElementsByClassName("ticker-item");
+
+        let starcoincurrentprice= document.getElementsByClassName("price-text ticker-price");
+        let starcoinname= document.getElementsByClassName("market-name-text");
+        totalprofitloss=0-totalinr;
+        //console.log(starcoinname[0].innerText);
+        for(let i =0;i<starcoins.length;i++){
+            totalprofitloss+= (coinamtMap.get( starcoinname[i].innerText.slice(0,-4) ))* ( parseFloat(starcoincurrentprice[i].innerText.replace(/[,₹]/g, '') ) ) ;
+            // console.log(coinamtMap.get( starcoinname[i].innerText.slice(0,-4) ) );
+            // console.log(parseFloat(starcoincurrentprice[i].innerText.replace(/[,₹]/g, '') ) );
+        }
+        LP.innerHTML = "P/L : ₹ " + totalprofitloss.toFixed(3) + "(" + (totalprofitloss*100/totalinr).toFixed(2) + "%)" ;
+
+        if(totalprofitloss>0)
+        { Object.assign(LP.style,Livestyles2);
+         await sleep(100);
+         Object.assign(LP.style,Livestyles0);
+        }
+        else{ Object.assign(LP.style,Livestyles1);
+             await sleep(100);
+             Object.assign(LP.style,Livestyles0);
+            }
+    }
+
+    async function MrX(){
+
+        let star= document.getElementsByTagName("label");
+        star[0].click();
+
+        let starcoins= document.getElementsByClassName("ticker-item");
+
+        let starcoincurrentprice= document.getElementsByClassName("price-text ticker-price");
+        let result= "";
+        let result0="";
+
+        for( let j=0; j<starcoins.length; j++)
+        {
+            starcoins[j].click();
+
+            await sleep(500);
+            let p= document.getElementsByTagName('h6');
+
+            p[8].click();
+            await sleep(500);
+            let s="";
+            let flag=1;
+            let coinamt=0;
+            let sellcoinamt=0;
+            let buycoinamtarray=[];
+            let buycoinpricearray=[];
+            let sellcoinamtarray=[];
+            let sellcoinpricearray=[];
+            let inramt=0;
+            let currentprice =parseFloat(starcoincurrentprice[j].innerText.replace(/[,₹]/g, ''));
+            let coinname="";
+            // Your code here...
+            let buyorderlist = document.getElementsByClassName("sc-bdVaJa sc-iuJeZd eVNcjS");
+
+
+            for( let i of buyorderlist){
+                console.log(i.innerText);
+                var myArray = i.innerText.split("\n");
+                console.log(myArray);
+                coinname=myArray[0];
+                //coinamt+= parseFloat(myArray[2].replace(/,/g, ''));
+                //inramt+= parseFloat(myArray[5].replace(/,/g, ''));
+
+                buycoinamtarray.push( parseFloat(myArray[2].replace(/,/g, '')) );
+                buycoinpricearray.push( parseFloat(myArray[4].replace(/,/g, '')) );
+
+            }
+
+            let sellorderlist = document.getElementsByClassName("sc-bdVaJa sc-iuJeZd blXZKS");
+
+
+            for( let i of sellorderlist){
+                console.log(i.innerText);
+                var myArray2 = i.innerText.split("\n");
+                console.log(myArray2);
+                sellcoinamt+=parseFloat(myArray2[2].replace(/,/g, ''));
+                sellcoinamtarray.push( parseFloat(myArray2[2].replace(/,/g, '')) );
+                sellcoinpricearray.push( parseFloat(myArray2[4].replace(/,/g, '')) );
+
+            }
+
+            console.log(buycoinamtarray);
+            console.log(buycoinpricearray);
+            console.log(sellcoinamtarray);
+            console.log(sellcoinpricearray);
+            let k = buycoinamtarray.length-1;
+            while(sellcoinamt)
+            {
+                if(buycoinamtarray[k]> sellcoinamt)
+                {
+                    buycoinamtarray[k]-=sellcoinamt;
+                    sellcoinamt=0;
+                }
+                else
+                {
+                    sellcoinamt-=buycoinamtarray[k];
+                    buycoinamtarray[k]=0;
+                    k--;
+                }
+            }
+            console.log(buycoinamtarray);
+            while(k+1)
+            {
+                coinamt+=buycoinamtarray[k];
+                inramt+=buycoinamtarray[k]*buycoinpricearray[k];
+                k-=1;
+            }
+            coinamtMap.set(coinname,coinamt);
+            console.log(coinamtMap.get(coinname));
+            result=result.concat("\n Total "+ coinname +" : " + coinamt +
+                                 ", Total INR spend: " +inramt +
+                                 ", AVG price : " + (inramt/coinamt).toFixed(2) +
+                                 ", COINS Current value: " + (coinamt*currentprice).toFixed(2) +
+                                 ", Profit/Loss :" + ( coinamt*currentprice - inramt).toFixed(2)+
+                                 "("+ ( (coinamt*currentprice - inramt)*100/inramt ).toFixed(2) +"%)\n"
+                                );
+            totalinr +=inramt;
+            totalprofitloss += coinamt*currentprice - inramt;
+        }
+        result0 = " Total int :" + totalinr.toFixed(2) + ", Total profit/loss :" + totalprofitloss.toFixed(2) +"("+ (totalprofitloss*100/totalinr).toFixed(2) +"%)\n";
+        alert(result0.concat(result));
+
+
+        liveprofitloss();
+
+        liveloop();
+    }
+
+    btn.onclick =() => {
+        MrX();
+
+    }
+    btn2.onclick =() =>{
+       // liveprofitloss();
+        flag=changeflag(flag);
+        liveloop();
+    }
+
+
+
+});
