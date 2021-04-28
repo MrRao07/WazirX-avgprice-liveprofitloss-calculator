@@ -37,6 +37,7 @@ window.addEventListener('load', async function() {
     let btn = document.createElement("button");
     btn.innerHTML = "Mr X";
     btn.className = "Btn";
+    btn.title ="";
     A[0].append(btn);
 
     const styles ={
@@ -105,8 +106,9 @@ window.addEventListener('load', async function() {
         totalprofitloss=0-totalinr;
         //console.log(starcoinname[0].innerText);
         for(let i =0;i<starcoins.length;i++){
+            if( coinamtMap.has( starcoinname[i].innerText.slice(0,-4) ) ){
             totalprofitloss+= (coinamtMap.get( starcoinname[i].innerText.slice(0,-4) ))* ( parseFloat(starcoincurrentprice[i].innerText.replace(/[,₹]/g, '') ) ) ;
-            // console.log(coinamtMap.get( starcoinname[i].innerText.slice(0,-4) ) );
+            }// console.log(coinamtMap.get( starcoinname[i].innerText.slice(0,-4) ) );
             // console.log(parseFloat(starcoincurrentprice[i].innerText.replace(/[,₹]/g, '') ) );
         }
         LP.innerHTML = "P/L : ₹ " + totalprofitloss.toFixed(3) + "(" + (totalprofitloss*100/totalinr).toFixed(2) + "%)" ;
@@ -156,72 +158,77 @@ window.addEventListener('load', async function() {
             // Your code here...
             let buyorderlist = document.getElementsByClassName("sc-bdVaJa sc-iuJeZd eVNcjS");
 
+            if(buyorderlist.length>0){
 
-            for( let i of buyorderlist){
-                console.log(i.innerText);
-                var myArray = i.innerText.split("\n");
-                console.log(myArray);
-                coinname=myArray[0];
-                //coinamt+= parseFloat(myArray[2].replace(/,/g, ''));
-                //inramt+= parseFloat(myArray[5].replace(/,/g, ''));
+                for( let i of buyorderlist){
+                    console.log(i.innerText);
+                    var myArray = i.innerText.split("\n");
+                    console.log(myArray);
+                    coinname=myArray[0];
+                    //coinamt+= parseFloat(myArray[2].replace(/,/g, ''));
+                    //inramt+= parseFloat(myArray[5].replace(/,/g, ''));
 
-                buycoinamtarray.push( parseFloat(myArray[2].replace(/,/g, '')) );
-                buycoinpricearray.push( parseFloat(myArray[4].replace(/,/g, '')) );
+                    buycoinamtarray.push( parseFloat(myArray[2].replace(/,/g, '')) );
+                    buycoinpricearray.push( parseFloat(myArray[4].replace(/,/g, '')) );
 
-            }
-
-            let sellorderlist = document.getElementsByClassName("sc-bdVaJa sc-iuJeZd blXZKS");
-
-
-            for( let i of sellorderlist){
-                console.log(i.innerText);
-                var myArray2 = i.innerText.split("\n");
-                console.log(myArray2);
-                sellcoinamt+=parseFloat(myArray2[2].replace(/,/g, ''));
-                sellcoinamtarray.push( parseFloat(myArray2[2].replace(/,/g, '')) );
-                sellcoinpricearray.push( parseFloat(myArray2[4].replace(/,/g, '')) );
-
-            }
-
-            console.log(buycoinamtarray);
-            console.log(buycoinpricearray);
-            console.log(sellcoinamtarray);
-            console.log(sellcoinpricearray);
-            let k = buycoinamtarray.length-1;
-            while(sellcoinamt)
-            {
-                if(buycoinamtarray[k]> sellcoinamt)
-                {
-                    buycoinamtarray[k]-=sellcoinamt;
-                    sellcoinamt=0;
                 }
-                else
+
+                let sellorderlist = document.getElementsByClassName("sc-bdVaJa sc-iuJeZd blXZKS");
+
+
+                for( let i of sellorderlist){
+                    console.log(i.innerText);
+                    var myArray2 = i.innerText.split("\n");
+                    console.log(myArray2);
+                    sellcoinamt+=parseFloat(myArray2[2].replace(/,/g, ''));
+                    sellcoinamtarray.push( parseFloat(myArray2[2].replace(/,/g, '')) );
+                    sellcoinpricearray.push( parseFloat(myArray2[4].replace(/,/g, '')) );
+
+                }
+
+                console.log(buycoinamtarray);
+                console.log(buycoinpricearray);
+                console.log(sellcoinamtarray);
+                console.log(sellcoinpricearray);
+                let k = buycoinamtarray.length-1;
+                while(sellcoinamt)
                 {
-                    sellcoinamt-=buycoinamtarray[k];
-                    buycoinamtarray[k]=0;
-                    k--;
+                    if(buycoinamtarray[k]> sellcoinamt)
+                    {
+                        buycoinamtarray[k]-=sellcoinamt;
+                        sellcoinamt=0;
+                    }
+                    else
+                    {
+                        sellcoinamt-=buycoinamtarray[k];
+                        buycoinamtarray[k]=0;
+                        k--;
+                    }
+                }
+                if(buycoinamtarray[0]>0){
+                    console.log(buycoinamtarray);
+                    while(k+1)
+                    {
+                        coinamt+=buycoinamtarray[k];
+                        inramt+=buycoinamtarray[k]*buycoinpricearray[k];
+                        k-=1;
+                    }
+                    coinamtMap.set(coinname,coinamt);
+                    console.log(coinamtMap.get(coinname));
+                    result=result.concat("\n Total "+ coinname +" : " + coinamt +
+                                         ", Total INR spend: " +inramt +
+                                         ", AVG price : " + (inramt/coinamt).toFixed(3) +
+                                         ", COINS Current value: " + (coinamt*currentprice).toFixed(3) +
+                                         ", Profit/Loss :" + ( coinamt*currentprice - inramt).toFixed(3)+
+                                         "("+ ( (coinamt*currentprice - inramt)*100/inramt ).toFixed(3) +"%)\n"
+                                        );
+                    totalinr +=inramt;
+                    totalprofitloss += coinamt*currentprice - inramt;
                 }
             }
-            console.log(buycoinamtarray);
-            while(k+1)
-            {
-                coinamt+=buycoinamtarray[k];
-                inramt+=buycoinamtarray[k]*buycoinpricearray[k];
-                k-=1;
-            }
-            coinamtMap.set(coinname,coinamt);
-            console.log(coinamtMap.get(coinname));
-            result=result.concat("\n Total "+ coinname +" : " + coinamt +
-                                 ", Total INR spend: " +inramt +
-                                 ", AVG price : " + (inramt/coinamt).toFixed(2) +
-                                 ", COINS Current value: " + (coinamt*currentprice).toFixed(2) +
-                                 ", Profit/Loss :" + ( coinamt*currentprice - inramt).toFixed(2)+
-                                 "("+ ( (coinamt*currentprice - inramt)*100/inramt ).toFixed(2) +"%)\n"
-                                );
-            totalinr +=inramt;
-            totalprofitloss += coinamt*currentprice - inramt;
         }
-        result0 = " Total int :" + totalinr.toFixed(2) + ", Total profit/loss :" + totalprofitloss.toFixed(2) +"("+ (totalprofitloss*100/totalinr).toFixed(2) +"%)\n";
+        result0 = " Total int :" + totalinr.toFixed(3) + ", Total profit/loss :" + totalprofitloss.toFixed(3) +"("+ (totalprofitloss*100/totalinr).toFixed(3) +"%)\n";
+        btn.title=result0.concat(result);
         alert(result0.concat(result));
 
 
@@ -235,7 +242,7 @@ window.addEventListener('load', async function() {
 
     }
     btn2.onclick =() =>{
-       // liveprofitloss();
+        // liveprofitloss();
         flag=changeflag(flag);
         liveloop();
     }
@@ -243,3 +250,15 @@ window.addEventListener('load', async function() {
 
 
 });
+
+
+
+
+
+
+
+
+
+
+
+
