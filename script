@@ -73,11 +73,21 @@ window.addEventListener('load', async function() {
 
     let localprofitstyles1 ={
         //green
-        color: "rgb(0, 200, 83)"
+        color: "rgb(0, 200, 83)",
+        display: "block",
+        fontSize: "10px",
+        lineHeight: "1.2",
+        textAlign: "left",
+        fontWeight: "bold"
     }
     let localprofitstyles2 ={
         //red
-        color: "rgb(244, 67, 54)"
+        color: "rgb(244, 67, 54)",
+        display: "block",
+        fontSize: "10px",
+        lineHeight: "1.2",
+        textAlign: "left",
+        fontWeight: "bold"
     }
 
 
@@ -100,7 +110,7 @@ window.addEventListener('load', async function() {
         while(1)
         {
             if(flag==0)return;
-            await sleep(2000);
+            await sleep(1000);
             //btn2.click();
             liveprofitloss();
         }
@@ -248,7 +258,7 @@ window.addEventListener('load', async function() {
         }
         result0 = " Total int :" + totalinr.toFixed(3) + ", Total profit/loss :" + totalprofitloss.toFixed(3) +"("+ (totalprofitloss*100/totalinr).toFixed(3) +"%)\n";
         btn.title=result0.concat(result);
-        alert(result0.concat(result));
+        //alert(result0.concat(result));
 
 
         liveprofitloss();
