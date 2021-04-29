@@ -30,6 +30,7 @@ window.addEventListener('load', async function() {
     let totalinr=0;
     let totalprofitloss=0;
     let coinamtMap = new Map();
+    let coininrspendMap = new Map();
     let flag=1;
 
     let A= document.getElementsByClassName("sc-bdVaJa sc-jzgbtB cqfbzB");
@@ -70,6 +71,15 @@ window.addEventListener('load', async function() {
         background: "#d5f5e4"
     }
 
+    let localprofitstyles1 ={
+        //green
+        color: "rgb(0, 200, 83)"
+    }
+    let localprofitstyles2 ={
+        //red
+        color: "rgb(244, 67, 54)"
+    }
+
 
     let btn2 = document.createElement("button");
     btn2.innerHTML = "re";
@@ -90,7 +100,7 @@ window.addEventListener('load', async function() {
         while(1)
         {
             if(flag==0)return;
-            await sleep(1000);
+            await sleep(2000);
             //btn2.click();
             liveprofitloss();
         }
@@ -103,11 +113,19 @@ window.addEventListener('load', async function() {
 
         let starcoincurrentprice= document.getElementsByClassName("price-text ticker-price");
         let starcoinname= document.getElementsByClassName("market-name-text");
+        let starcoinsubtextname= document.getElementsByClassName("market-change");
         totalprofitloss=0-totalinr;
         //console.log(starcoinname[0].innerText);
         for(let i =0;i<starcoins.length;i++){
             if( coinamtMap.has( starcoinname[i].innerText.slice(0,-4) ) ){
-            totalprofitloss+= (coinamtMap.get( starcoinname[i].innerText.slice(0,-4) ))* ( parseFloat(starcoincurrentprice[i].innerText.replace(/[,₹]/g, '') ) ) ;
+                totalprofitloss+= (coinamtMap.get( starcoinname[i].innerText.slice(0,-4) ))* ( parseFloat(starcoincurrentprice[i].innerText.replace(/[,₹]/g, '') ) ) ;
+
+                let localprofit = ( -(coininrspendMap.get(starcoinname[i].innerText.slice(0,-4))) + (coinamtMap.get(starcoinname[i].innerText.slice(0,-4)))*(parseFloat(starcoincurrentprice[i].innerText.replace(/[,₹]/g, ''))) ).toFixed(2) ;
+                let localprofitpercent = localprofit*100/(coininrspendMap.get(starcoinname[i].innerText.slice(0,-4)));
+                starcoinsubtextname[i].innerText= " ₹" + localprofit + " (" +localprofitpercent.toFixed(2) + "%)" ;
+                if(localprofit>0)
+                { Object.assign(starcoinsubtextname[i].style,localprofitstyles1); }
+                else{ Object.assign(starcoinsubtextname[i].style,localprofitstyles2); }
             }// console.log(coinamtMap.get( starcoinname[i].innerText.slice(0,-4) ) );
             // console.log(parseFloat(starcoincurrentprice[i].innerText.replace(/[,₹]/g, '') ) );
         }
@@ -214,6 +232,7 @@ window.addEventListener('load', async function() {
                         k-=1;
                     }
                     coinamtMap.set(coinname,coinamt);
+                    coininrspendMap.set(coinname,inramt);
                     console.log(coinamtMap.get(coinname));
                     result=result.concat("\n Total "+ coinname +" : " + coinamt +
                                          ", Total INR spend: " +inramt +
