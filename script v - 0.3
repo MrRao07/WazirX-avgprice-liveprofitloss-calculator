@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         Mr X 0.3
+// @name         Mr X 
 // @namespace    http://tampermonkey.net/
-// @version      0.3
+// @version      0.3.1
 // @description  try to take over the world!
 // @author       Mr.Rao
 // @match        https://wazirx.com/exchange/*
@@ -22,10 +22,6 @@ function changeflag(flag){
     else return 0;
 }
 
-function sycnfun( ){
-    console.log("hello");
-    //  x= sycn[0].value;
-}
 
 window.addEventListener('load', async function() {
     'use strict';
@@ -190,6 +186,103 @@ window.addEventListener('load', async function() {
 
 
 
+        let D2= document.getElementsByClassName("footer");
+
+        let cal = document.createElement("text");
+        cal.className = "cal"
+        cal.innerText="Calculator";
+        D2[0].before(cal);
+
+
+        let sycn = document.createElement("select");
+        sycn.innerHTML = "sycn";
+        sycn.id="myselect";
+        sycn.className = "coin_select";
+        sycn.title ="Select the coin";
+       // console.log(sycn);
+        D2[0].before(sycn);
+
+        let curr_avg_price_text =document.createElement("text");
+        curr_avg_price_text.className ="cal2";
+        curr_avg_price_text.innerText="Current Avg Price";
+        D2[0].before(curr_avg_price_text);
+
+        let curr_avg_price =document.createElement("input");
+        curr_avg_price.value=0.00;
+        D2[0].before(curr_avg_price);
+
+        let curr_coin_no_text =document.createElement("text");
+        curr_coin_no_text.className ="cal3";
+        curr_coin_no_text.innerText="Current NO of COIN";
+        D2[0].before(curr_coin_no_text);
+
+        let curr_coin_no =document.createElement("input");
+        D2[0].before(curr_coin_no);
+
+        let new_buy_price_text =document.createElement("text");
+        new_buy_price_text.className ="cal4";
+        new_buy_price_text.innerText="New Buy Price";
+        D2[0].before(new_buy_price_text);
+
+        let new_buy_price =document.createElement("input");
+        D2[0].before(new_buy_price);
+
+        let new_buy_cost_text =document.createElement("text");
+        new_buy_cost_text.className ="cal5";
+        new_buy_cost_text.innerText="Buy Cost";
+        D2[0].before(new_buy_cost_text);
+
+        let new_buy_cost =document.createElement("input");
+        D2[0].before(new_buy_cost);
+
+
+        let calbtn = document.createElement("button");
+        calbtn.innerHTML = "calculate";
+        calbtn.className = "Btn";
+        calbtn.title ="";
+        D2[0].before(calbtn);
+
+        let NEWPRICE = document.createElement("data");
+        NEWPRICE.className ="newprice";
+        NEWPRICE.innerText = " Result =>";
+        D2[0].before(NEWPRICE);
+
+        Object.assign(calbtn.style,calbtnstyles);
+        Object.assign(cal.style,datastyles);
+
+        Object.assign(curr_avg_price.style,inputstyles2);
+        Object.assign(curr_coin_no.style,inputstyles2);
+        Object.assign(new_buy_price.style,inputstyles2);
+        Object.assign(new_buy_cost.style,inputstyles2);
+
+        Object.assign(curr_avg_price_text.style,datastyles2);
+        Object.assign(curr_coin_no_text.style,datastyles2);
+        Object.assign(new_buy_price_text.style,datastyles2);
+        Object.assign(new_buy_cost_text.style,datastyles2);
+
+
+        Object.assign(NEWPRICE.style,datastyles);
+
+        Object.assign(sycn.style,selectstyles);
+
+
+        sycn.onchange= ()=>{
+            //console.log(document.getElementById("myselect").value);
+            let x= document.getElementById("myselect").value;
+            var xarr = x.split(',');
+            curr_coin_no.value= parseFloat(xarr[0]);
+            curr_avg_price.value= parseFloat(xarr[1]);
+            new_buy_price.value= xarr[2];
+            new_buy_cost.value= xarr[3];
+           // console.log(x);
+        }
+
+        calbtn.onclick =()=>{
+            let new_avg_price= ((parseFloat(curr_avg_price.value) *parseFloat(curr_coin_no.value)) + parseFloat(new_buy_cost.value))/(parseFloat(curr_coin_no.value) + (parseFloat(new_buy_cost.value)/parseFloat(new_buy_price.value)));
+            NEWPRICE.innerText=" New COIN COUNT : " + (parseFloat(curr_coin_no.value) + (parseFloat(new_buy_cost.value)/parseFloat(new_buy_price.value))).toFixed(4) + "    New avg Price : "+ new_avg_price + " ";
+
+        }
+
 
     async function liveloop(){
         while(1)
@@ -353,13 +446,13 @@ window.addEventListener('load', async function() {
                 }
 
                 //----------if COIN is  Transfer from WAZIRX to BINENCE ------------
-               /* if(coinname =="USDT" )
+                if(coinname =="USDT" )
                 {
                     let x=800;
                     sellcoinamtarray.push(x);
-                    sellcoinpricearray.push(-----);
+                    sellcoinpricearray.push(78.030);
                     sellcoinamt+=x;
-                }*/
+                }
 
 
                 ///  console.log(buycoinamtarray);
@@ -394,17 +487,17 @@ window.addEventListener('load', async function() {
                     var sycns = document.getElementsByClassName("coin_select");
                     var temp=document.createElement("option");
                     temp.text= coinname;
-                    var A=[parseFloat(coinamt),(inramt/coinamt).toFixed(4)];
+                    var A=[parseFloat(coinamt),(inramt/coinamt).toFixed(5),currentprice,inramt];
                     temp.value= A;
-                    console.log(temp);
-                    console.log(sycns[0]);
+                  //  console.log(temp);
+                  //  console.log(sycns[0]);
                     sycns[0].add(temp);
 
                     coininrspendMap.set(coinname,inramt);
                     ///   console.log(coinamtMap.get(coinname));
                     result=result.concat("\n Total "+ coinname +" Coin : " + coinamt +
                                          ",   Total ₹ spend: " +inramt.toFixed(3) +
-                                         ",   AVG price : " + (inramt/coinamt).toFixed(4) +
+                                         ",   AVG price : " + (inramt/coinamt).toFixed(5) +
                                          ",   Current value: " + (coinamt*currentprice).toFixed(2) +
                                          ",   P/L : " + ( coinamt*currentprice - inramt).toFixed(2)+
                                          "("+ ( (coinamt*currentprice - inramt)*100/inramt ).toFixed(2) +"%)\n"
@@ -427,105 +520,12 @@ window.addEventListener('load', async function() {
         liveloop();
     }
     btn.onclick =() => {
+        var sycns = document.getElementsByClassName("coin_select");
+        sycns[0].innerHTML=null;
         MrX();
 
 
 
-
-        let D2= document.getElementsByClassName("footer");
-
-        let cal = document.createElement("text");
-        cal.className = "cal"
-        cal.innerText="Calculator";
-        D2[0].before(cal);
-
-
-        let sycn = document.createElement("select");
-        sycn.innerHTML = "sycn";
-        sycn.id="myselect";
-        sycn.className = "coin_select";
-        sycn.title ="Select the coin";
-        console.log(sycn);
-        D2[0].before(sycn);
-
-        let curr_avg_price_text =document.createElement("text");
-        curr_avg_price_text.className ="cal2";
-        curr_avg_price_text.innerText="Current Avg Price";
-        D2[0].before(curr_avg_price_text);
-
-        let curr_avg_price =document.createElement("input");
-        curr_avg_price.value=0.00;
-        D2[0].before(curr_avg_price);
-
-        let curr_coin_no_text =document.createElement("text");
-        curr_coin_no_text.className ="cal3";
-        curr_coin_no_text.innerText="Current NO of COIN";
-        D2[0].before(curr_coin_no_text);
-
-        let curr_coin_no =document.createElement("input");
-        D2[0].before(curr_coin_no);
-
-        let new_buy_price_text =document.createElement("text");
-        new_buy_price_text.className ="cal4";
-        new_buy_price_text.innerText="New Buy Price";
-        D2[0].before(new_buy_price_text);
-
-        let new_buy_price =document.createElement("input");
-        D2[0].before(new_buy_price);
-
-        let new_buy_cost_text =document.createElement("text");
-        new_buy_cost_text.className ="cal5";
-        new_buy_cost_text.innerText="Buy Cost";
-        D2[0].before(new_buy_cost_text);
-
-        let new_buy_cost =document.createElement("input");
-        D2[0].before(new_buy_cost);
-
-
-        let calbtn = document.createElement("button");
-        calbtn.innerHTML = "calculate";
-        calbtn.className = "Btn";
-        calbtn.title ="";
-        D2[0].before(calbtn);
-
-        let NEWPRICE = document.createElement("data");
-        NEWPRICE.className ="newprice";
-        NEWPRICE.innerText = " Result =>";
-        D2[0].before(NEWPRICE);
-
-        Object.assign(calbtn.style,calbtnstyles);
-        Object.assign(cal.style,datastyles);
-
-        Object.assign(curr_avg_price.style,inputstyles2);
-        Object.assign(curr_coin_no.style,inputstyles2);
-        Object.assign(new_buy_price.style,inputstyles2);
-        Object.assign(new_buy_cost.style,inputstyles2);
-
-        Object.assign(curr_avg_price_text.style,datastyles2);
-        Object.assign(curr_coin_no_text.style,datastyles2);
-        Object.assign(new_buy_price_text.style,datastyles2);
-        Object.assign(new_buy_cost_text.style,datastyles2);
-
-
-        Object.assign(NEWPRICE.style,datastyles);
-
-        Object.assign(sycn.style,selectstyles);
-
-
-        sycn.onchange= ()=>{
-            //console.log(document.getElementById("myselect").value);
-            let x= document.getElementById("myselect").value;
-            var xarr = x.split(',');
-            curr_coin_no.value= parseFloat(xarr[0]);
-            curr_avg_price.value= parseFloat(xarr[1]);
-            console.log(x);
-        }
-
-        calbtn.onclick =()=>{
-            let new_avg_price= ((parseFloat(curr_avg_price.value) *parseFloat(curr_coin_no.value)) + parseFloat(new_buy_cost.value))/(parseFloat(curr_coin_no.value) + (parseFloat(new_buy_cost.value)/parseFloat(new_buy_price.value)));
-            NEWPRICE.innerText=" New COIN COUNT : " + (parseFloat(curr_coin_no.value) + (parseFloat(new_buy_cost.value)/parseFloat(new_buy_price.value))).toFixed(0) + "    New avg Price : "+ new_avg_price + " ";
-
-        }
 
     }
     btn2.onclick =() =>{
