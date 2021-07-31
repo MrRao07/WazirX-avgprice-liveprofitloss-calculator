@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Mr X 
 // @namespace    http://tampermonkey.net/
-// @version      0.3.1
+// @version      0.3.1.1
 // @description  try to take over the world!
 // @author       Mr.Rao
 // @match        https://wazirx.com/exchange/*
@@ -34,13 +34,15 @@ window.addEventListener('load', async function() {
     let coininrspendMap = new Map();
     let flag=1;
 
-    let D= document.getElementsByClassName("sc-hMqMXs dmFtgd navbar navbar-default");
+    //let D= document.getElementsByClassName("sc-hMqMXs dmFtgd navbar navbar-default");
+    let D= document.getElementsByClassName("sc-hMqMXs fGvUTR navbar navbar-default");
     let data = document.createElement("Details");
     data.innerText = "";
     data.className = "Data";
     D[0].after(data);
 
-    let A= document.getElementsByClassName("sc-bdVaJa sc-jzgbtB cqfbzB");
+    //let A= document.getElementsByClassName("sc-bdVaJa sc-jzgbtB cqfbzB");
+    let A= document.getElementsByClassName("sc-bdVaJa sc-hGoxap bNStzn");
 
     let btn = document.createElement("button");
     btn.innerHTML = "Mr X";
@@ -297,7 +299,8 @@ window.addEventListener('load', async function() {
 
 
     async function liveprofitloss(){
-        let star= document.getElementsByTagName("label");
+        let star= document.getElementsByTagName("mdi mdi-star");
+
         //star[0].click();
         let starcoins= document.getElementsByClassName("ticker-item");
 
@@ -374,20 +377,21 @@ window.addEventListener('load', async function() {
             let currentprice =parseFloat(starcoincurrentprice[j].innerText.replace(/[,₹]/g, ''));
             let coinname="";
             // Your code here...
-            let buyorderlist = document.getElementsByClassName("sc-bdVaJa sc-iuJeZd eVNcjS");
+            let buyorderlist = document.getElementsByClassName("sc-bdVaJa sc-hORach iufTWR");
 
             if(buyorderlist.length>0){
 
                 for( let i of buyorderlist){
                     /// console.log(i.innerText);
                     var myArray = i.innerText.split("\n");
-                    ///console.log(myArray);
+                   // console.log(myArray);
                     coinname=myArray[0];
                     //coinamt+= parseFloat(myArray[2].replace(/,/g, ''));
                     //inramt+= parseFloat(myArray[5].replace(/,/g, ''));
-
+                   
                     buycoinamtarray.push( parseFloat(myArray[2].replace(/,/g, '')) );
                     buycoinpricearray.push( parseFloat(myArray[4].replace(/,/g, '')) );
+                    
 
                 }
 
@@ -420,17 +424,19 @@ window.addEventListener('load', async function() {
 
                 } */
 
-                let sellorderlist = document.getElementsByClassName("sc-bdVaJa sc-iuJeZd blXZKS");
+                let sellorderlist = document.getElementsByClassName("sc-bdVaJa sc-hORach fPTluh");
 
 
                 for( let i of sellorderlist){
                     /// console.log(i.innerText);
                     var myArray2 = i.innerText.split("\n");
-                    /// console.log(myArray2);
+                    // console.log(myArray2);
                     sellcoinamt+=parseFloat(myArray2[2].replace(/,/g, ''));
+
+                     
                     sellcoinamtarray.push( parseFloat(myArray2[2].replace(/,/g, '')) );
                     sellcoinpricearray.push( parseFloat(myArray2[4].replace(/,/g, '')) );
-
+                    
                 }
                 let partialsellorderlist = document.getElementsByClassName("sc-bdVaJa sc-iuJeZd fUgZaV");
 
@@ -448,12 +454,12 @@ window.addEventListener('load', async function() {
                 //----------if COIN is  Transfer from WAZIRX to BINENCE ------------
                /* if(coinname =="USDT" )
                 {
-                    let x=800; //coin amount
+                    let x=800;
                     sellcoinamtarray.push(x);
-                    sellcoinpricearray.push(78.030);  //price
+                    sellcoinpricearray.push(78.030);
                     sellcoinamt+=x;
-                }
-                */
+                }*/
+
 
                 ///  console.log(buycoinamtarray);
                 ///   console.log(buycoinpricearray);
@@ -489,12 +495,12 @@ window.addEventListener('load', async function() {
                     temp.text= coinname;
                     var A=[parseFloat(coinamt),(inramt/coinamt).toFixed(5),currentprice,inramt];
                     temp.value= A;
-                  //  console.log(temp);
-                  //  console.log(sycns[0]);
+                    //console.log(temp);
+                    //console.log(sycns[0]);
                     sycns[0].add(temp);
 
                     coininrspendMap.set(coinname,inramt);
-                    ///   console.log(coinamtMap.get(coinname));
+                    //   console.log(coinamtMap.get(coinname));
                     result=result.concat("\n Total "+ coinname +" Coin : " + coinamt +
                                          ",   Total ₹ spend: " +inramt.toFixed(3) +
                                          ",   AVG price : " + (inramt/coinamt).toFixed(5) +
